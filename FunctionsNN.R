@@ -95,9 +95,20 @@ one_pass <- function(X, y, K, W1, b1, W2, b2, lambda){
 # b2 - a vector of size K of intercepts
 evaluate_error <- function(Xval, yval, W1, b1, W2, b2){
   # [ToDo] Forward pass to get scores on validation data
+  n <- length(yval)
+  # From input to hidden 
+  H1 <- Xval %*% W1 + matrix(b1, nrow = n, ncol = length(b1), byrow = TRUE)
+  # ReLU
+  H1 <- (abs(H1) + H1)/2
+  # From hidden to output scores
+  scores <- H1 %*% W2 + b2
   
   # [ToDo] Evaluate error rate (in %) when 
   # comparing scores-based predictions with true yval
+  exp_score <- exp(scores)
+  pk <- exp_score / rowSums(exp_score)
+  preds <- apply(pk, 1, which.max) - 1
+  error = (1 - mean(yval == preds)) * 100
   
   return(error)
 }
@@ -122,9 +133,17 @@ NN_train <- function(X, y, Xval, yval, lambda = 0.01,
   # Get sample size and total number of batches
   n = length(y)
   nBatch = floor(n/mbatch)
-
+  # Get K and p
+  K <- length(unique(y))
+  p <- ncol(X)
+  
   # [ToDo] Initialize b1, b2, W1, W2 using initialize_bw with seed as seed,
   # and determine any necessary inputs from supplied ones
+  init <- initialize_bw(p, hidden_p, K, scale = scale, seed = seed)
+  W1 <- init$W1
+  b1 <- init$b1
+  W2 <- init$W2
+  b2 <- init$b2
   
   # Initialize storage for error to monitor convergence
   error = rep(NA, nEpoch)
@@ -132,17 +151,29 @@ NN_train <- function(X, y, Xval, yval, lambda = 0.01,
   
   # Set seed for reproducibility
   set.seed(seed)
-  # Start iterations
   for (i in 1:nEpoch){
     # Allocate bathes
     batchids = sample(rep(1:nBatch, length.out = n), size = n)
     # [ToDo] For each batch
     #  - do one_pass to determine current error and gradients
     #  - perform SGD step to update the weights and intercepts
-    
+    error_epoch <- c()
+    for(j in 1:nBatch){
+      # Get loss and gradient on the batch
+      pass = one_pass(X[batchids == j, ], y[batchids == j], K,  W1, b1, W2, b2, lambda)
+      error_epoch[j] <- pass$error
+      
+      # Make an update of W1, b1, W2, b2
+      W1 <- W1 - rate * pass$grads$dW1
+      b1 <- b1 - rate * pass$grads$db1
+      W2 <- W2 - rate * pass$grads$dW2
+      b2 <- b2 - rate * pass$grads$db2
+    }
     # [ToDo] In the end of epoch, evaluate
     # - average training error across batches
     # - validation error using evaluate_error function
+    error[i] <- mean(error_epoch)
+    error_val[i] <- evaluate_error(Xval, yval, W1, b1, W2, b2)
   }
   # Return end result
   return(list(error = error, error_val = error_val, params =  list(W1 = W1, b1 = b1, W2 = W2, b2 = b2)))
