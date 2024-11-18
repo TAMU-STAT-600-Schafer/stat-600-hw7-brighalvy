@@ -27,15 +27,22 @@ initialize_bw <- function(p, hidden_p, K, scale = 1e-3, seed = 12345){
 loss_grad_scores <- function(y, scores, K){
   
   # [ToDo] Calculate loss when lambda = 0
-  # loss = ...
+  n <- length(y)
+  exp_score <- exp(scores)
+  pk <- exp_score / matrix(rep(rowSums(exp_score), each = K), nrow = n, ncol = K, byrow = T)
+  log_pk <- log(pk)
+  Y <- matrix(0, n, K)
+  Y[cbind(1:n, y + 1)] = 1
+  loss <- -sum(diag(crossprod(Y, log_pk)))/n
   
   # [ToDo] Calculate misclassification error rate (%)
   # when predicting class labels using scores versus true y
-  # error = ...
+  preds <- apply(pk, 1, which.max) - 1
+  error = (1 - mean(y == preds))*100
   
   # [ToDo] Calculate gradient of loss with respect to scores (output)
   # when lambda = 0
-  # grad = ...
+  grad <- (pk - Y) / n
   
   # Return loss, gradient and misclassification error on training (in %)
   return(list(loss = loss, grad = grad, error = error))
