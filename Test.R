@@ -16,3 +16,14 @@ y <- apply(pk, 1, which.max) - 1 # Get simulated y:
 
 init <- initialize_bw(p, 10, K)
 
+
+Xval = X
+yval = y
+
+hidden_p = 100
+
+seed = 1234
+out = NN_train(X, y, Xval, yval, rate = 0.01, mbatch = 20, nEpoch = 400, hidden_p = hidden_p, scale = 1e-3, seed = seed)
+
+plot(1:length(out$error), out$error, ylim = c(0, 30))
+lines(1:length(out$error), out$error_val)
