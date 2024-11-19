@@ -101,7 +101,7 @@ evaluate_error <- function(Xval, yval, W1, b1, W2, b2){
   # ReLU
   H1 <- (abs(H1) + H1)/2
   # From hidden to output scores
-  scores <- H1 %*% W2 + b2
+  scores <- H1 %*% W2 + matrix(b2, nrow = n, ncol = K, byrow = TRUE)
   
   # [ToDo] Evaluate error rate (in %) when 
   # comparing scores-based predictions with true yval
