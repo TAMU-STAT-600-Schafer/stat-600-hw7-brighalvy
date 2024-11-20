@@ -29,16 +29,21 @@ loss_grad_scores <- function(y, scores, K){
   # [ToDo] Calculate loss when lambda = 0
   n <- length(y)
   exp_score <- exp(scores)
-  pk <- exp_score / matrix(rep(rowSums(exp_score), each = K), nrow = n, ncol = K, byrow = T)
+  pk <- exp_score / matrix(
+    rep(rowSums(exp_score), each = K),
+    nrow = n,
+    ncol = K,
+    byrow = T
+  )
   log_pk <- log(pk)
   Y <- matrix(0, n, K)
   Y[cbind(1:n, y + 1)] = 1
-  loss <- -sum(diag(crossprod(Y, log_pk)))/n
+  loss <- -sum(diag(crossprod(Y, log_pk))) / n
   
   # [ToDo] Calculate misclassification error rate (%)
   # when predicting class labels using scores versus true y
   preds <- apply(pk, 1, which.max) - 1
-  error = (1 - mean(y == preds))*100
+  error = (1 - mean(y == preds)) * 100
   
   # [ToDo] Calculate gradient of loss with respect to scores (output)
   # when lambda = 0
@@ -60,7 +65,7 @@ loss_grad_scores <- function(y, scores, K){
 one_pass <- function(X, y, K, W1, b1, W2, b2, lambda){
   n = length(y)
   # [To Do] Forward pass
-  # From input to hidden 
+  # From input to hidden
   H1 <- X %*% W1 + b1
   # ReLU
   H1[H1 < 0] <- 0
@@ -132,7 +137,7 @@ NN_train <- function(X, y, Xval, yval, lambda = 0.01,
                      hidden_p = 20, scale = 1e-3, seed = 12345){
   # Get sample size and total number of batches
   n = length(y)
-  nBatch = floor(n/mbatch)
+  nBatch = floor(n / mbatch)
   # Get K and p
   K <- length(unique(y))
   p <- ncol(X)
