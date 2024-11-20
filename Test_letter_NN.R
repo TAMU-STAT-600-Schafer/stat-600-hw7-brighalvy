@@ -49,12 +49,12 @@ lines(1:length(out2$error_val), out2$error_val, col = "red")
 # Evaluate error on testing data
 test_error = evaluate_error(Xt, Yt, out2$params$W1, out2$params$b1,
                             out2$params$W2, out2$params$b2)
-test_error # 16.1 # I got 15.68333
+test_error # 16.1 # I got 15.76111
 
 # [ToDo] Try changing the parameters above to obtain a better performance,
 # this will likely take several trials
 out3 = NN_train(Xtrain, Ytrain, Xval, Yval,  lambda = 0.001, 
-                rate = 0.05, mbatch = 20,  nEpoch = 125, hidden_p = 125, 
+                rate = 0.05, mbatch = 20,  nEpoch = 500, hidden_p = 125, 
                 scale = 1e-3,seed = 12345)
 plot(1:length(out3$error), out3$error, ylim = c(0, 70))
 lines(1:length(out3$error_val), out3$error_val, col = "red")
@@ -62,4 +62,4 @@ lines(1:length(out3$error_val), out3$error_val, col = "red")
 # Evaluate error on testing data
 test_error = evaluate_error(Xt, Yt, out3$params$W1, out3$params$b1,
                             out3$params$W2,out3$params$b2)
-test_error # 15.6
+test_error # 14.86667
