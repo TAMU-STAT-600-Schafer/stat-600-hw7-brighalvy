@@ -61,9 +61,9 @@ one_pass <- function(X, y, K, W1, b1, W2, b2, lambda){
   n = length(y)
   # [To Do] Forward pass
   # From input to hidden 
-  A1 <- X %*% W1 + b1
+  H1 <- X %*% W1 + b1
   # ReLU
-  H1 <- (abs(A1) + A1)/2
+  H1[H1 < 0] <- 0
   # From hidden to output scores
   scores <- H1 %*% W2 + b2
   
@@ -76,7 +76,7 @@ one_pass <- function(X, y, K, W1, b1, W2, b2, lambda){
   
   # Get gradient for hidden, and 1st layer W1, b1 (use lambda as needed)
   dH = tcrossprod(out$grad, W2)
-  dA1 = dH * (A1 > 0)
+  dA1 = dH * (H1 > 0)
   dW1 = crossprod(X, dA1) + lambda * W1
   db1 = colSums(dA1)
   
@@ -99,7 +99,7 @@ evaluate_error <- function(Xval, yval, W1, b1, W2, b2){
   # From input to hidden 
   H1 <- Xval %*% W1 + b1
   # ReLU
-  H1 <- (abs(H1) + H1)/2
+  H1[H1 < 0] <- 0
   # From hidden to output scores
   scores <- H1 %*% W2 +  b2
   
