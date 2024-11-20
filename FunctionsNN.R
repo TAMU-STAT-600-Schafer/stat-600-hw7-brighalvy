@@ -61,11 +61,11 @@ one_pass <- function(X, y, K, W1, b1, W2, b2, lambda){
   n = length(y)
   # [To Do] Forward pass
   # From input to hidden 
-  A1 <- X %*% W1 + matrix(b1, nrow = n, ncol = length(b1), byrow = TRUE)
+  A1 <- X %*% W1 + b1
   # ReLU
   H1 <- (abs(A1) + A1)/2
   # From hidden to output scores
-  scores <- H1 %*% W2 + matrix(b2, nrow = n, ncol = K, byrow = TRUE)
+  scores <- H1 %*% W2 + b2
   
   # [ToDo] Backward pass
   # Get loss, error, gradient at current scores using loss_grad_scores function
@@ -97,11 +97,11 @@ evaluate_error <- function(Xval, yval, W1, b1, W2, b2){
   # [ToDo] Forward pass to get scores on validation data
   n <- length(yval)
   # From input to hidden 
-  H1 <- Xval %*% W1 + matrix(b1, nrow = n, ncol = length(b1), byrow = TRUE)
+  H1 <- Xval %*% W1 + b1
   # ReLU
   H1 <- (abs(H1) + H1)/2
   # From hidden to output scores
-  scores <- H1 %*% W2 +  matrix(b2, nrow = n, ncol = length(b2), byrow = TRUE)
+  scores <- H1 %*% W2 +  b2
   
   # [ToDo] Evaluate error rate (in %) when 
   # comparing scores-based predictions with true yval
