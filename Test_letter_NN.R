@@ -49,7 +49,7 @@ lines(1:length(out2$error_val), out2$error_val, col = "red")
 # Evaluate error on testing data
 test_error = evaluate_error(Xt, Yt, out2$params$W1, out2$params$b1,
                             out2$params$W2, out2$params$b2)
-test_error # 16.1 # I got 15.76111
+test_error # 16.1 # I got 15.68333
 
 # [ToDo] Try changing the parameters above to obtain a better performance,
 # this will likely take several trials
@@ -62,4 +62,4 @@ lines(1:length(out3$error_val), out3$error_val, col = "red")
 # Evaluate error on testing data
 test_error = evaluate_error(Xt, Yt, out3$params$W1, out3$params$b1,
                             out3$params$W2,out3$params$b2)
-test_error # 14.86667
+test_error # 14.01111
